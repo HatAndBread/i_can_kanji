@@ -4,4 +4,6 @@ Rails.application.routes.draw do
   
   root to: "pages#home"
   get "/home", to: "pages#home"
+  
+  resources :study_sets, only: [:index, :create]
 end
