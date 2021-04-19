@@ -17,6 +17,17 @@ class StudySetsController < ApplicationController
             study_set.save!
         end
     end
+
+    def destroy
+        study_set = StudySet.find(params[:id])
+        if study_set.destroy
+            update_user_frontend(current_user)
+        else
+          puts "error deleting study set: #{params}"
+          render json: {error: 'Could not delete study set'}.to_json
+        end
+    end
+
     private
 
     def study_set_params
@@ -45,4 +56,5 @@ class StudySetsController < ApplicationController
             render json: {errors: failures}.to_json
         end
     end
+
 end

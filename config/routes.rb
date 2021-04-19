@@ -6,5 +6,5 @@ Rails.application.routes.draw do
   root to: "pages#home"
   get "/home", to: "pages#home"
   get "/users", to: "users#index"
-  resources :study_sets, only: [:index, :create]
+  resources :study_sets, only: [:index, :create, :destroy]
 end
