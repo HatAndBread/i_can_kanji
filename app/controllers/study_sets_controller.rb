@@ -28,6 +28,17 @@ class StudySetsController < ApplicationController
         end
     end
 
+    def update
+        p params
+        study_set = StudySet.find(params[:id])
+        if study_set.update(study_set_params)
+            save_words(params[:words], study_set)
+        else
+            puts "Study set failed to update!"
+            study_set.update!(study_set_params)
+        end
+    end
+
     private
 
     def study_set_params
@@ -37,17 +48,15 @@ class StudySetsController < ApplicationController
     def save_words(words, study_set)
         failures = []
         words.each do |word|
-            new_word = Word.new
+            word[:id] ? new_word = Word.find(word[:id]) : new_word = Word.new
             new_word.study_set = study_set
             new_word.kanji = word[:kanji]
             new_word.yomikata = word[:yomikata]
             new_word.definition = word[:definition]
-            if new_word.save
-                puts "Saved a new word successfully"
+            if word[:id]
+                failures << new_word.errors unless new_word.update({kanji: word[:kanji], yomikata: word[:yomikata], definition: word[:definition]})
             else
-                failures << new_word.errors
-                puts "NEW WORD FAILED TO SAVE"
-                new_word.save!
+                failures << new_word.errors unless new_word.save
             end
         end
         if failures.size.zero?
@@ -56,5 +65,4 @@ class StudySetsController < ApplicationController
             render json: {errors: failures}.to_json
         end
     end
-
 end
